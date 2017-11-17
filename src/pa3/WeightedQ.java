@@ -15,16 +15,19 @@ public class WeightedQ { // un-weighted Q is also OK
 		
 		if(!visited.contains(e.item)) {//if this is the first time item i is visited
 			visited.add(e.item);
+			
 			int counter = queue.size();
-			for(Element qe : queue) {
-				if(e.weight > qe.weight) {//FCFS when e's weight
-					--counter;			// move ahead 1 place
-				}else {
-					break;
+			for (int i = counter; i >0 ; --i) {
+				if(e.weight > queue.get(i-1).weight ) {
+					--counter;
 				}
 			}
 			queue.add(counter, e); // insert into that position
 		}
+//		for(int i = 0; i < queue.size(); ++i) {
+//			System.out.println(queue.get(i).weight);
+//		}
+//		System.out.println("end");
 	}
 	
 	public Element extract() {
