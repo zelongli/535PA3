@@ -55,6 +55,9 @@ public class WikiCrawler {
 	         ioe.printStackTrace();
 	    }
 	}
+	public void BFS(String url) {
+		
+	}
 	
 	public void crawl(){
 		String line;
@@ -88,11 +91,11 @@ public class WikiCrawler {
 		
 		String fulltext = sb.toString();
 //		System.out.print(fulltext);
-		Pattern p = Pattern.compile("(.{1,400}?)(<a href=\")(/wiki/.*?)(\")(.*?)(>)(.*?)(</a>)(.{1,400}?)");
+		Pattern p = Pattern.compile("(.{1,60}?)(<a href=\")(/wiki/.*?)(\")(.*?)(>)(.*?)(</a>)(.{1,60})");
 		Matcher m = p.matcher(fulltext);
 		while(m.find()){
 			String currentURL = m.group(3);//group 3 is the wiki part
-//			System.out.println(currentURL+" OMGOMG");
+///			System.out.println(currentURL+" OMGOMG");
 			if(currentURL.contains("#") || currentURL.contains(":")) {//be polite,be elegant
 				continue;
 			}else {
@@ -103,54 +106,72 @@ public class WikiCrawler {
 					if(currentURL.toLowerCase().contains(keywords[i]) || m.group(7).toLowerCase().contains(keywords[i])){
 						Wqueue.add(new Element(currentURL,1));
 						flag = false;
+//						System.out.println("weigtht 1");
+						System.out.println("addin3g " + currentURL);
+						break;
 					}
+					
 				}
-				
+			
 				if(flag) {
 					String[] frontWords = m.group(1).toLowerCase().split("\\W+");
-					System.out.println("flag section length " + frontWords.length);
-					System.out.println("flag section " + frontWords[0]);
-					System.out.println("flag section " + frontWords[1]);
-					System.out.println("flag section " + frontWords[2]);
-					System.out.println("flag section " + frontWords[3]);
-					System.out.println("flag section " + frontWords[4]);
+					int frontdistance = 30;
+			
+				outter_loop:
+					for(int i = frontWords.length -1; i > 0; --i) {
+						for(int j = 0; j < keywords.length; ++j) {
+							if(frontWords[i].contains(keywords[j])) {
+//								System.out.println("front words is " + frontWords[i]);
+								frontdistance = frontWords.length -i;
+								break outter_loop;
+							}
+						}
+						
+					}
+//					System.out.println("front distance is " + frontdistance);
+				
+					String[] backWords = m.group(9).toLowerCase().split("\\W+");
+					int backdistance = 30;
+//					System.out.println("back words.leng is "+backWords.length);
+		
+				outter_loop:
+					for(int i = 0 ; i < backWords.length; ++i) {
+						for(int j = 0; j < keywords.length;++j) {
+							if(backWords[i].contains(keywords[j])) {
+//								System.out.println("back words is " + backWords[i]);
+								backdistance = i + 1;
+								break outter_loop;
+								}
+						}
+					
+					}
+					int shortestDistance = Math.min(frontdistance, backdistance);
+					System.out.println("adding " + currentURL);
+					if(shortestDistance > 20) {
+						Wqueue.add(new Element(currentURL,0));
+					}else {
+						Wqueue.add(new Element(currentURL,(1/(shortestDistance+2))));
+					}
+//					System.out.println("back distance is " + backdistance);
+//					System.out.println("flag section length " + frontWords.length);
+//					System.out.println("final distance is "+ Math.min(frontdistance, backdistance));
+//					System.out.println("flag section " + frontWords[0]);
+//					System.out.println("flag section " + frontWords[1]);
+//					System.out.println("flag section " + frontWords[2]);
+//					System.out.println("flag section " + frontWords[3]);
+//					System.out.println("flag section " + frontWords[4]);
+//					System.out.println("flag section " + frontWords[5]);
+//					System.out.println("flag section " + frontWords[6]);
+//					System.out.println("flag section " + frontWords[7]);
+					
+					
 				}
 				
-//				for(int i = 0; i< this.keywords.length; ++i){
-//					int weightCounter = 20;
-//					if(currentURL.toLowerCase().contains(keywords[i]) || m.group(7).toLowerCase().contains(keywords[i])){
-//						//grpup 7 is the anchor word
-//						//when anchor text or http address contain keywords, weight is assigned to 1
-//						weightCounter = 0;
-//					}else{//if cannot find a key words in URL nor anchor word, do computer distance
-//						String[] frontWords = m.group(1).toLowerCase().split("\\W+");
-//						System.out.println("front words sieze " + frontWords[0]);
-//						for(int k1 = 0; k1< frontWords.length; k1++){
-//							if(frontWords[k1].contains(keywords[i])){
-//								weightCounter = Math.min(weightCounter, Math.abs(20-k1));
-//							}
-//						}
-//						String[] backWords = m.group(9).toLowerCase().split("\\W+");
-//						for(int k2 = 0; k2< backWords.length; k2++){
-//							if(backWords[k2].contains(keywords[i])){
-//								weightCounter = Math.min(weightCounter, k2 + 1);
-//							}
-//						}			
-//					}
-//					if(weightCounter == 20){
-//						weight = Math.max(weight, 0);
-//					}else if(weightCounter == 0){
-//						weight = Math.max(weight, 1);
-//					}else{
-//						weight = Math.max(weight, 1/(weightCounter + 2));
-//					}
-//				}
 				
 			}
 		} 
 		    
 	}
-//	public double 
 }
 
 
